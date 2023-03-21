@@ -36,8 +36,7 @@ If you use homebrew on Apple M1/M2 mac, specify the homebrew installation direct
 ```ruby
 require 'sentencepiece'
 
-sp = SentencePiece::SentencePieceProcessor.new
-sp.load('/path/to/model_file.model')
+sp = SentencePiece::SentencePieceProcessor.new(model_file: '/path/to/model_file.model')
 
 sp.encode('This is a test')
 # => [17522, 2852, 29, 2002]

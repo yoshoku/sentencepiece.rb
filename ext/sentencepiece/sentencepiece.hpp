@@ -54,7 +54,7 @@ public:
   static VALUE define_class(VALUE outer) {
     rb_cSentencePieceProcessor = rb_define_class_under(outer, "SentencePieceProcessor", rb_cObject);
     rb_define_alloc_func(rb_cSentencePieceProcessor, sentencepiece_processor_alloc);
-    rb_define_method(rb_cSentencePieceProcessor, "initialize", RUBY_METHOD_FUNC(_sentencepiece_processor_init), 0);
+    rb_define_method(rb_cSentencePieceProcessor, "initialize", RUBY_METHOD_FUNC(_sentencepiece_processor_init), -1);
     rb_define_method(rb_cSentencePieceProcessor, "load", RUBY_METHOD_FUNC(_sentencepiece_processor_load), 1);
     rb_define_method(rb_cSentencePieceProcessor, "encode", RUBY_METHOD_FUNC(_sentencepiece_processor_encode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
@@ -67,9 +67,30 @@ public:
 private:
   static const rb_data_type_t sentencepiece_processor_type;
 
-  static VALUE _sentencepiece_processor_init(VALUE self) {
+  static VALUE _sentencepiece_processor_init(int argc, VALUE* argv, VALUE self) {
     sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
     new (ptr) sentencepiece::SentencePieceProcessor();
+
+    VALUE kw_args = Qnil;
+    ID kw_table[1] = { rb_intern("model_file") };
+    VALUE kw_values[1] = { Qundef };
+    rb_scan_args(argc, argv, "0:", &kw_args);
+    rb_get_kwargs(kw_args, kw_table, 0, 1, kw_values);
+    VALUE model_file = kw_values[0] != Qundef ? kw_values[0] : Qnil;
+
+    if (!NIL_P(model_file)) {
+      if (!RB_TYPE_P(model_file, T_STRING)) {
+        rb_raise(rb_eArgError, "expected model_file to be a String");
+        return Qnil;
+      }
+      sentencepiece::util::Status status = ptr->Load(StringValueCStr(model_file));
+      if (!status.ok()) {
+        rb_raise(rb_eSentencePieceError, "%s", status.message());
+        return Qnil;
+      }
+    }
+
+    RB_GC_GUARD(model_file);
     return Qnil;
   };
 
@@ -80,6 +101,7 @@ private:
       rb_raise(rb_eSentencePieceError, "%s", status.message());
       return Qfalse;
     }
+    RB_GC_GUARD(model_path);
     return Qtrue;
   };
 
