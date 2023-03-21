@@ -1,0 +1,27 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  Exclude:
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'Steepfile'
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Layout/LineLength:
+  AllowedPatterns: ['(\A|\s)#']
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/GlobalVars:
+  Exclude:
+    - 'ext/**/*'
