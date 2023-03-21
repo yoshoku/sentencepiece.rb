@@ -61,6 +61,10 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
     rb_define_method(rb_cSentencePieceProcessor, "id_to_piece", RUBY_METHOD_FUNC(_sentencepiece_processor_id_to_piece), 1);
+    rb_define_method(rb_cSentencePieceProcessor, "unk_id", RUBY_METHOD_FUNC(_sentencepiece_processor_unk_id), 0);
+    rb_define_method(rb_cSentencePieceProcessor, "bos_id", RUBY_METHOD_FUNC(_sentencepiece_processor_bos_id), 0);
+    rb_define_method(rb_cSentencePieceProcessor, "eos_id", RUBY_METHOD_FUNC(_sentencepiece_processor_eos_id), 0);
+    rb_define_method(rb_cSentencePieceProcessor, "pad_id", RUBY_METHOD_FUNC(_sentencepiece_processor_pad_id), 0);
     return rb_cSentencePieceProcessor;
   };
 
@@ -337,6 +341,26 @@ private:
       }
     }
     return output;
+  };
+
+  static VALUE _sentencepiece_processor_unk_id(VALUE self) {
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    return INT2NUM(ptr->unk_id());
+  };
+
+  static VALUE _sentencepiece_processor_bos_id(VALUE self) {
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    return INT2NUM(ptr->bos_id());
+  };
+
+  static VALUE _sentencepiece_processor_eos_id(VALUE self) {
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    return INT2NUM(ptr->eos_id());
+  };
+
+  static VALUE _sentencepiece_processor_pad_id(VALUE self) {
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    return INT2NUM(ptr->pad_id());
   };
 };
 
