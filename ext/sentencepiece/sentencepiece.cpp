@@ -1,5 +1,5 @@
 /**
- * sentencepiece.rb is a Ruby binding for the SentencePiece.
+ * sentencepiece.rb provides Ruby bindings for the SentencePiece.
  *
  * Copyright (c) 2023 Atsushi Tatsuma
  *
