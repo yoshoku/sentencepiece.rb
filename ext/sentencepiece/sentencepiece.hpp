@@ -57,6 +57,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "initialize", RUBY_METHOD_FUNC(_sentencepiece_processor_init), -1);
     rb_define_method(rb_cSentencePieceProcessor, "load", RUBY_METHOD_FUNC(_sentencepiece_processor_load), 1);
     rb_define_method(rb_cSentencePieceProcessor, "encode", RUBY_METHOD_FUNC(_sentencepiece_processor_encode), -1);
+    rb_define_method(rb_cSentencePieceProcessor, "encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_ids), 1);
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
@@ -194,6 +195,23 @@ private:
     RB_GC_GUARD(out_type);
     RB_GC_GUARD(text);
 
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_encode_as_ids(VALUE self, VALUE text) {
+    if (!RB_TYPE_P(text, T_STRING)) {
+      rb_raise(rb_eArgError, "expected text to be a String");
+      return Qnil;
+    }
+
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    const std::vector<int> ids = ptr->EncodeAsIds(StringValueCStr(text));
+    VALUE output = rb_ary_new();
+    for (const int idx : ids) {
+      rb_ary_push(output, INT2NUM(idx));
+    }
+
+    RB_GC_GUARD(text);
     return output;
   };
 
