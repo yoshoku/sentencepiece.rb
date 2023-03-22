@@ -329,14 +329,24 @@ private:
     VALUE output = Qnil;
     sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
     if (RB_INTEGER_TYPE_P(ids)) {
-      const std::string piece = ptr->IdToPiece(NUM2INT(ids));
+      const int idx = NUM2INT(ids);
+      if (idx < 0 || idx >= ptr->GetPieceSize()) {
+        rb_raise(rb_eIndexError, "piece id %i is out of range", idx);
+        return Qnil;
+      }
+      const std::string piece = ptr->IdToPiece(idx);
       output = rb_utf8_str_new_cstr(piece.c_str());
     } else {
       const size_t n_ids = RARRAY_LEN(ids);
       output = rb_ary_new();
       for (size_t i = 0; i < n_ids; i++) {
         VALUE et = rb_ary_entry(ids, i);
-        const std::string piece = ptr->IdToPiece(NUM2INT(et));
+        const int idx = NUM2INT(et);
+        if (idx < 0 || idx >= ptr->GetPieceSize()) {
+          rb_raise(rb_eIndexError, "piece id %i is out of range", idx);
+          return Qnil;
+        }
+        const std::string piece = ptr->IdToPiece(idx);
         rb_ary_push(output, rb_utf8_str_new_cstr(piece.c_str()));
       }
     }
