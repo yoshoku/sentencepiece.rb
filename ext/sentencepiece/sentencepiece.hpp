@@ -59,6 +59,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "encode", RUBY_METHOD_FUNC(_sentencepiece_processor_encode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_ids), 1);
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_pieces), 1);
+    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_pieces), 2);
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
@@ -227,6 +228,37 @@ private:
     VALUE output = rb_ary_new();
     for (const std::string& token : pieces) {
       rb_ary_push(output, rb_utf8_str_new_cstr(token.c_str()));
+    }
+
+    RB_GC_GUARD(text);
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_nbest_encode_as_pieces(VALUE self, VALUE text, VALUE kw_args) {
+    ID kw_table[1] = { rb_intern("nbest_size") };
+    VALUE kw_values[1] = { Qundef };
+    rb_get_kwargs(kw_args, kw_table, 1, 0, kw_values);
+
+    if (!RB_TYPE_P(text, T_STRING)) {
+      rb_raise(rb_eArgError, "expected text to be a String");
+      return Qnil;
+    }
+    if (!RB_INTEGER_TYPE_P(kw_values[0])) {
+      rb_raise(rb_eArgError, "expected nbest_size to be an Integer");
+      return Qnil;
+    }
+
+    const int nbest_size = NUM2INT(kw_values[0]);
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    const std::vector<std::vector<std::string>> pieces = ptr->NBestEncodeAsPieces(StringValueCStr(text), nbest_size);
+
+    VALUE output = rb_ary_new();
+    for (const std::vector<std::string>& tokens : pieces) {
+      VALUE sub_output = rb_ary_new();
+      for (const std::string& token : tokens) {
+        rb_ary_push(sub_output, rb_utf8_str_new_cstr(token.c_str()));
+      }
+      rb_ary_push(output, sub_output);
     }
 
     RB_GC_GUARD(text);
