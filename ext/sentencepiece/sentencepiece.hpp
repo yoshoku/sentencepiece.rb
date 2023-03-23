@@ -64,6 +64,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_pieces), -1);
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_ids), -1);
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
+    rb_define_method(rb_cSentencePieceProcessor, "decode_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_decode_pieces), 1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
     rb_define_method(rb_cSentencePieceProcessor, "id_to_piece", RUBY_METHOD_FUNC(_sentencepiece_processor_id_to_piece), 1);
@@ -472,6 +473,26 @@ private:
         }
       }
     }
+
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_decode_pieces(VALUE self, VALUE pieces) {
+    if (!RB_TYPE_P(pieces, T_ARRAY)) {
+      rb_raise(rb_eArgError, "expected pieces to be an Array");
+      return Qnil;
+    }
+
+    std::vector<std::string> pcs;
+    const size_t n_pieces = RARRAY_LEN(pieces);
+    for (size_t i = 0; i < n_pieces; i++) {
+      VALUE et = rb_ary_entry(pieces, i);
+      pcs.push_back(StringValueCStr(et));
+    }
+
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    std::string text = ptr->DecodePieces(pcs);
+    VALUE output = rb_utf8_str_new_cstr(text.c_str());
 
     return output;
   };
