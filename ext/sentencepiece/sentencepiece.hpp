@@ -392,7 +392,7 @@ private:
     VALUE out_type = kw_values[0] != Qundef ? kw_values[0] : rb_str_new_cstr("int");
 
     if (!RB_TYPE_P(pieces, T_ARRAY)) {
-      rb_raise(rb_eArgError, "expected out_type to be an Array");
+      rb_raise(rb_eArgError, "expected pieces to be an Array");
       return Qnil;
     }
     if (strcmp(StringValueCStr(out_type), "str") != 0 && strcmp(StringValueCStr(out_type), "int") != 0) {
@@ -420,7 +420,7 @@ private:
           rb_raise(rb_eSentencePieceError, "%s", status.message());
           return Qfalse;
         }
-        output = rb_str_new_cstr(text.c_str());
+        output = rb_utf8_str_new_cstr(text.c_str());
       } else {
         output = rb_ary_new();
         for (size_t i = 0; i < n_pieces; i++) {
@@ -437,7 +437,7 @@ private:
             rb_raise(rb_eSentencePieceError, "%s", status.message());
             return Qfalse;
           }
-          rb_ary_push(output, rb_str_new_cstr(text.c_str()));
+          rb_ary_push(output, rb_utf8_str_new_cstr(text.c_str()));
         }
       }
     } else {
@@ -453,7 +453,7 @@ private:
           rb_raise(rb_eSentencePieceError, "%s", status.message());
           return Qfalse;
         }
-        output = rb_str_new_cstr(text.c_str());
+        output = rb_utf8_str_new_cstr(text.c_str());
       } else {
         output = rb_ary_new();
         for (size_t i = 0; i < n_pieces; i++) {
@@ -470,7 +470,7 @@ private:
             rb_raise(rb_eSentencePieceError, "%s", status.message());
             return Qfalse;
           }
-          rb_ary_push(output, rb_str_new_cstr(text.c_str()));
+          rb_ary_push(output, rb_utf8_str_new_cstr(text.c_str()));
         }
       }
     }
