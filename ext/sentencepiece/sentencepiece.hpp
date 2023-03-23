@@ -59,8 +59,8 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "encode", RUBY_METHOD_FUNC(_sentencepiece_processor_encode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_ids), 1);
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_pieces), 1);
-    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_pieces), 2);
-    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_ids), 2);
+    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_pieces), -1);
+    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_ids), -1);
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_pieces), -1);
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_ids), -1);
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
@@ -237,9 +237,13 @@ private:
     return output;
   };
 
-  static VALUE _sentencepiece_processor_nbest_encode_as_pieces(VALUE self, VALUE text, VALUE kw_args) {
+  static VALUE _sentencepiece_processor_nbest_encode_as_pieces(int argc, VALUE* argv, VALUE self) {
+    VALUE kw_args = Qnil;
     ID kw_table[1] = { rb_intern("nbest_size") };
     VALUE kw_values[1] = { Qundef };
+
+    VALUE text = Qnil;
+    rb_scan_args(argc, argv, "1:", &text, &kw_args);
     rb_get_kwargs(kw_args, kw_table, 1, 0, kw_values);
 
     if (!RB_TYPE_P(text, T_STRING)) {
@@ -268,9 +272,13 @@ private:
     return output;
   };
 
-  static VALUE _sentencepiece_processor_nbest_encode_as_ids(VALUE self, VALUE text, VALUE kw_args) {
+  static VALUE _sentencepiece_processor_nbest_encode_as_ids(int argc, VALUE* argv, VALUE self) {
+    VALUE kw_args = Qnil;
     ID kw_table[1] = { rb_intern("nbest_size") };
     VALUE kw_values[1] = { Qundef };
+
+    VALUE text = Qnil;
+    rb_scan_args(argc, argv, "1:", &text, &kw_args);
     rb_get_kwargs(kw_args, kw_table, 1, 0, kw_values);
 
     if (!RB_TYPE_P(text, T_STRING)) {
