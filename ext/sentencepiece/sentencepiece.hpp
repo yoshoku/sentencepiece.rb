@@ -69,6 +69,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_serialized_proto), 1);
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_serialized_proto), -1);
     rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_serialized_proto), -1);
+    rb_define_method(rb_cSentencePieceProcessor, "decode_pieces_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_decode_pieces_as_serialized_proto), 1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
     rb_define_method(rb_cSentencePieceProcessor, "id_to_piece", RUBY_METHOD_FUNC(_sentencepiece_processor_id_to_piece), 1);
@@ -591,6 +592,26 @@ private:
     VALUE output = rb_str_new_cstr(serialized.c_str());
 
     RB_GC_GUARD(text);
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_decode_pieces_as_serialized_proto(VALUE self, VALUE pieces) {
+    if (!RB_TYPE_P(pieces, T_ARRAY)) {
+      rb_raise(rb_eArgError, "expected pieces to be an Array");
+      return Qnil;
+    }
+
+    std::vector<std::string> pcs;
+    const size_t n_pieces = RARRAY_LEN(pieces);
+    for (size_t i = 0; i < n_pieces; i++) {
+      VALUE et = rb_ary_entry(pieces, i);
+      pcs.push_back(StringValueCStr(et));
+    }
+
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    const sentencepiece::util::bytes serialized = ptr->DecodePiecesAsSerializedProto(pcs);
+    VALUE output = rb_str_new_cstr(serialized.c_str());
+
     return output;
   };
 
