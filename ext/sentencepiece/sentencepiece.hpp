@@ -68,6 +68,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "decode_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_decode_ids), 1);
     rb_define_method(rb_cSentencePieceProcessor, "encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_serialized_proto), 1);
     rb_define_method(rb_cSentencePieceProcessor, "sample_encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_sample_encode_as_serialized_proto), -1);
+    rb_define_method(rb_cSentencePieceProcessor, "nbest_encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_nbest_encode_as_serialized_proto), -1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
     rb_define_method(rb_cSentencePieceProcessor, "id_to_piece", RUBY_METHOD_FUNC(_sentencepiece_processor_id_to_piece), 1);
@@ -560,6 +561,33 @@ private:
     const float alpha = NUM2DBL(kw_values[1]);
     sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
     const sentencepiece::util::bytes serialized = ptr->SampleEncodeAsSerializedProto(StringValueCStr(text), nbest_size, alpha);
+    VALUE output = rb_str_new_cstr(serialized.c_str());
+
+    RB_GC_GUARD(text);
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_nbest_encode_as_serialized_proto(int argc, VALUE* argv, VALUE self) {
+    VALUE kw_args = Qnil;
+    ID kw_table[1] = { rb_intern("nbest_size") };
+    VALUE kw_values[1] = { Qundef };
+
+    VALUE text = Qnil;
+    rb_scan_args(argc, argv, "1:", &text, &kw_args);
+    rb_get_kwargs(kw_args, kw_table, 1, 0, kw_values);
+
+    if (!RB_TYPE_P(text, T_STRING)) {
+      rb_raise(rb_eArgError, "expected text to be a String");
+      return Qnil;
+    }
+    if (!RB_INTEGER_TYPE_P(kw_values[0])) {
+      rb_raise(rb_eArgError, "expected nbest_size to be an Integer");
+      return Qnil;
+    }
+
+    const int nbest_size = NUM2INT(kw_values[0]);
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    const sentencepiece::util::bytes serialized = ptr->NBestEncodeAsSerializedProto(StringValueCStr(text), nbest_size);
     VALUE output = rb_str_new_cstr(serialized.c_str());
 
     RB_GC_GUARD(text);
