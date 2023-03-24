@@ -66,6 +66,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "decode", RUBY_METHOD_FUNC(_sentencepiece_processor_decode), -1);
     rb_define_method(rb_cSentencePieceProcessor, "decode_pieces", RUBY_METHOD_FUNC(_sentencepiece_processor_decode_pieces), 1);
     rb_define_method(rb_cSentencePieceProcessor, "decode_ids", RUBY_METHOD_FUNC(_sentencepiece_processor_decode_ids), 1);
+    rb_define_method(rb_cSentencePieceProcessor, "encode_as_serialized_proto", RUBY_METHOD_FUNC(_sentencepiece_processor_encode_as_serialized_proto), 1);
     rb_define_method(rb_cSentencePieceProcessor, "piece_size", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_size), 0);
     rb_define_method(rb_cSentencePieceProcessor, "piece_to_id", RUBY_METHOD_FUNC(_sentencepiece_processor_piece_to_id), 1);
     rb_define_method(rb_cSentencePieceProcessor, "id_to_piece", RUBY_METHOD_FUNC(_sentencepiece_processor_id_to_piece), 1);
@@ -515,6 +516,20 @@ private:
     const std::string text = ptr->DecodeIds(pcs);
     VALUE output = rb_utf8_str_new_cstr(text.c_str());
 
+    return output;
+  };
+
+  static VALUE _sentencepiece_processor_encode_as_serialized_proto(VALUE self, VALUE text) {
+    if (!RB_TYPE_P(text, T_STRING)) {
+      rb_raise(rb_eArgError, "expected text to be a String");
+      return Qnil;
+    }
+
+    sentencepiece::SentencePieceProcessor* ptr = get_sentencepiece_processor(self);
+    const sentencepiece::util::bytes serialized = ptr->EncodeAsSerializedProto(StringValueCStr(text));
+    VALUE output = rb_str_new_cstr(serialized.c_str());
+
+    RB_GC_GUARD(text);
     return output;
   };
 
