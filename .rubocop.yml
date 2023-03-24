@@ -1,6 +1,7 @@
 require:
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-minitest
 
 AllCops:
   TargetRubyVersion: 2.7
@@ -18,9 +19,17 @@ Gemspec/RequiredRubyVersion:
 Layout/LineLength:
   AllowedPatterns: ['(\A|\s)#']
 
+Metrics/AbcSize:
+  Exclude:
+    - 'test/**/*'
+
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*'
+    - 'test/**/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'test/**/*'
 
 Style/GlobalVars:
   Exclude:
