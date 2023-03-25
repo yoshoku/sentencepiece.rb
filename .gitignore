@@ -13,6 +13,8 @@
 *.o
 *.a
 mkmf.log
+m.model
+m.vocab
 
 # rspec failure tracking
 .rspec_status
