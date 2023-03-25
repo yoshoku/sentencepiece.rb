@@ -27,6 +27,7 @@
 VALUE rb_mSentencePiece;
 VALUE rb_eSentencePieceError;
 VALUE rb_cSentencePieceProcessor;
+VALUE rb_cSentencePieceTrainer;
 
 class RbSentencePieceProcessor {
 public:
@@ -724,6 +725,44 @@ const rb_data_type_t RbSentencePieceProcessor::sentencepiece_processor_type = {
   NULL,
   NULL,
   RUBY_TYPED_FREE_IMMEDIATELY
+};
+
+namespace sentencepiece {
+class SentencePieceTrainerWrapper {
+public:
+  SentencePieceTrainerWrapper(){};
+  ~SentencePieceTrainerWrapper(){};
+
+  util::Status Train(absl::string_view args) {
+    return SentencePieceTrainer::Train(args);
+  };
+};
+} // namespace sentencepiece
+
+class RbSentencePieceTrainer {
+public:
+  static VALUE define_class(VALUE outer) {
+    rb_cSentencePieceTrainer = rb_define_class_under(outer, "SentencePieceTrainer", rb_cObject);
+    rb_define_singleton_method(rb_cSentencePieceTrainer, "train", RUBY_METHOD_FUNC(_sentencepiece_trainer_train), 1);
+    return rb_cSentencePieceTrainer;
+  };
+
+private:
+  static VALUE _sentencepiece_trainer_train(VALUE self, VALUE args) {
+    if (!RB_TYPE_P(args, T_STRING)) {
+      rb_raise(rb_eArgError, "expected args to be a String");
+      return Qnil;
+    }
+
+    const sentencepiece::util::Status status = sentencepiece::SentencePieceTrainer::Train(StringValueCStr(args));
+    if (!status.ok()) {
+      rb_raise(rb_eSentencePieceError, "%s", status.message());
+      return Qnil;
+    }
+
+    RB_GC_GUARD(args);
+    return Qnil;
+  };
 };
 
 #endif /* SENTENCEPIECE_HPP */

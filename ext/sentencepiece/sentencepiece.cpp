@@ -22,4 +22,5 @@ extern "C" void Init_sentencepiece(void) {
   rb_mSentencePiece = rb_define_module("SentencePiece");
   rb_eSentencePieceError = rb_define_class_under(rb_mSentencePiece, "Error", rb_eRuntimeError);
   RbSentencePieceProcessor::define_class(rb_mSentencePiece);
+  RbSentencePieceTrainer::define_class(rb_mSentencePiece);
 }
