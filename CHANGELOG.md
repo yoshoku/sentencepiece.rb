@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.1.0] - 2023-03-26
+
+- Add API documentation.
+- Add type signatures.
+
 ## [0.0.2] - 2023-03-26
 
 - Add SentencePieceTrainer class.

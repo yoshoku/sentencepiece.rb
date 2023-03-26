@@ -8,8 +8,6 @@
 sentencepiece.rb provides Ruby bindings for the [SentencePiece](https://github.com/google/sentencepiece),
 an unsupervised text tokenizer and detokenizer for neural network-based text generation.
 
-It is still **under development** and may undergo many changes in the future.
-
 ## Installation
 
 Install SentencePiece using your OS package manager;
