@@ -1,4 +1,63 @@
 module SentencePiece
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  class SentencePieceTrainer
+    def self.train: (String args) -> void
+  end
+
+  class SentencePieceProcessor
+    def initialize: (?model_file: String model_file) -> void
+
+    def load: (String model_file) -> void
+
+    def encode: (String text, ?out_type: String out_type) -> (Array[Integer] | Array[String])
+              | (Array[String] text, ?out_type: String out_type) -> (Array[Array[Integer]] | Array[Array[String]])
+
+    def encode_as_ids: (String text) -> Array[Integer]
+
+    def encode_as_pieces: (String text) -> Array[String]
+
+    def encode_as_serialized_proto: (String text) -> String
+
+    def nbest_encode_as_ids: (String text, nbest_size: Integer nbest_size) -> Array[Array[Integer]]
+
+    def nbest_encode_as_pieces: (String text, nbest_size: Integer nbest_size) -> Array[Array[String]]
+
+    def nbest_encode_as_serialized_proto: (String text, nbest_size: Integer nbest_size) -> String
+
+    def sample_encode_as_ids: (String text, nbest_size: Integer nbest_size, alpha: Float alpha) -> Array[Integer]
+
+    def sample_encode_as_pieces: (String text, nbest_size: Integer nbest_size, alpha: Float alpha) -> Array[String]
+
+    def sample_encode_as_serialized_proto: (String text, nbest_size: Integer nbest_size, alpha: Float alpha) -> String
+
+    def decode: (Array[Integer], ?out_type: String out_type) -> String
+              | (Array[Array[Integer]], ?out_type: String out_type) -> Array[String]
+              | (Array[String], ?out_type: String out_type) -> String
+              | (Array[Array[String]], ?out_type: String out_type) -> Array[String]
+
+    def decode_ids: (Array[Integer]) -> String
+
+    def decode_ids_as_serialized_proto: (Array[Integer] ids) -> String
+
+    def decode_pieces: (Array[String]) -> String
+
+    def decode_pieces_as_serialized_proto: (Array[String] pieces) -> String
+
+    def id_to_piece: (Integer id) -> String
+                   | (Array[Integer] ids) -> Array[String]
+
+    def piece_to_id: (String piece) -> Integer
+                   | (Array[String] pieces) -> Array[Integer]
+
+    def piece_size: () -> Integer
+
+    def bos_id: () -> Integer
+
+    def eos_id: () -> Integer
+
+    def pad_id: () -> Integer
+
+    def unk_id: () -> Integer
+  end
 end
