@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/yoshoku/sentencepiece.rb/actions/workflows/main.yml/badge.svg)](https://github.com/yoshoku/sentencepiece.rb/actions/workflows/main.yml)
 [![Gem Version](https://badge.fury.io/rb/sentencepiece.svg)](https://badge.fury.io/rb/sentencepiece)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://github.com/yoshoku/sentencepiece.rb/blob/main/LICENSE.txt)
+[![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://yoshoku.github.io/sentencepiece.rb/doc/)
 
 sentencepiece.rb provides Ruby bindings for the [SentencePiece](https://github.com/google/sentencepiece),
 an unsupervised text tokenizer and detokenizer for neural network-based text generation.
