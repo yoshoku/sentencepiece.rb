@@ -10,6 +10,7 @@ class TestSentencePieceProcessor < Minitest::Test
 
   def test_load
     assert_equal(1000, @sp.piece_size)
+    assert_equal(1000, @sp.vocab_size)
     assert_equal(0, @sp.piece_to_id('<unk>'))
     assert_equal(1, @sp.piece_to_id('<s>'))
     assert_equal(2, @sp.piece_to_id('</s>'))
@@ -25,6 +26,7 @@ class TestSentencePieceProcessor < Minitest::Test
 
   def test_ja_load
     assert_equal(8000, @sp_ja.piece_size)
+    assert_equal(8000, @sp_ja.vocab_size)
     assert_equal(0, @sp_ja.piece_to_id('<unk>'))
     assert_equal(1, @sp_ja.piece_to_id('<s>'))
     assert_equal(2, @sp_ja.piece_to_id('</s>'))

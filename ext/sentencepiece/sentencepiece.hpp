@@ -79,6 +79,7 @@ public:
     rb_define_method(rb_cSentencePieceProcessor, "bos_id", RUBY_METHOD_FUNC(_sentencepiece_processor_bos_id), 0);
     rb_define_method(rb_cSentencePieceProcessor, "eos_id", RUBY_METHOD_FUNC(_sentencepiece_processor_eos_id), 0);
     rb_define_method(rb_cSentencePieceProcessor, "pad_id", RUBY_METHOD_FUNC(_sentencepiece_processor_pad_id), 0);
+    rb_define_alias(rb_cSentencePieceProcessor, "vocab_size", "piece_size");
     return rb_cSentencePieceProcessor;
   };
 

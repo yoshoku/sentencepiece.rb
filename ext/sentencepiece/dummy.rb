@@ -185,6 +185,11 @@ module SentencePiece
     # @return [Integer]
     def piece_size(); end
 
+    # Returns the number of sentence pieces.
+    #
+    # @return [Integer]
+    def vocab_size(); end
+
     # Returns unknown (<unk>) id.
     #
     # @return [Integer]
