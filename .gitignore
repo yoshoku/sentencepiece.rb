@@ -16,5 +16,5 @@ mkmf.log
 m.model
 m.vocab
 
-# rspec failure tracking
+.DS_Store
 .rspec_status
