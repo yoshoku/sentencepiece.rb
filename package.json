@@ -5,11 +5,11 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
-    "husky": "^8.0.3"
+    "husky": "^9.1.7"
   }
 }
