@@ -9,6 +9,10 @@ abort 'libsentencepiece_train is not found.' unless have_library('sentencepiece_
 # abort 'sentencepiece_processor.h is not found.' unless have_header('sentencepiece_processor.h')
 # abort 'sentencepiece_trainer.h is not found.' unless have_header('sentencepiece_trainer.h')
 
-$CXXFLAGS << ' -std=c++11'
+$CXXFLAGS << if /mswin/ =~ RUBY_PLATFORM
+               '/std:c++17'
+             else
+               ' -std=c++17'
+             end
 
 create_makefile('sentencepiece/sentencepiece')
